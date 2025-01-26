@@ -36,9 +36,7 @@ RUN chmod +x /github-runner/entrypoint.sh
 # Создаем нового пользователя, чтобы запустить runner без root прав
 RUN adduser --disabled-password --gecos "" github && \
     usermod -aG docker github && \
-    chown -R github:github /github-runner && \
-    
-    chown root:docker /var/run/docker.sock
+    chown -R github:github /github-runner
 
 # Переключаемся на пользователя github
 USER github
