@@ -15,7 +15,7 @@ if [ ! -f .runner ]; then
 fi
 
 # Start the runner
-su github -c '/github-runner/run.sh'
+su - github -c '/github-runner/run.sh'
 
 # Execute the main container command
 exec "$@"
