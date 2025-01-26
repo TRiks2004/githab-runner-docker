@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -104,77 +105,3 @@ jobs:
           path: ~/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
 
-# name: Build and Push to GitHub Container Registry and Docker Hub
-
-# on:
-#   push:
-#     tags:
-#       - 'v*'
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     permissions:
-#       contents: read
-#       packages: write
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v3
-
-#       - name: Cache Docker layers
-#         uses: actions/cache@v4
-#         with:
-#           path: /tmp/.buildx-cache
-#           key: ${{ runner.os }}-buildx-${{ github.sha }}
-#           restore-keys: |
-#             ${{ runner.os }}-buildx-
-
-#       - name: Log in to GitHub Container Registry
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ghcr.io
-#           username: ${{ github.actor }}
-#           password: ${{ secrets.GITHUB_TOKEN }}
-
-#       - name: Log in to Docker Hub
-#         uses: docker/login-action@v3
-#         with:
-#           registry: docker.io
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-
-#       - name: Convert repository name to lowercase
-#         run: |
-#           REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-#           REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
-          
-#           IMAGE_NAME_GHCR="ghcr.io/$REPO_OWNER/$REPO_NAME"
-#           IMAGE_NAME_DOCKER="docker.io/$REPO_OWNER/$REPO_NAME"
-          
-#           echo "IMAGE_NAME_GHCR=$IMAGE_NAME_GHCR" >> $GITHUB_ENV
-#           echo "IMAGE_NAME_DOCKER=$IMAGE_NAME_DOCKER" >> $GITHUB_ENV
-
-#       - name: Build and Push Docker Image to GitHub Container Registry
-#         run: |
-#           VERSION=${GITHUB_REF_NAME}
-
-#           docker buildx build \
-#             --cache-from=type=local,src=/tmp/.buildx-cache \
-#             --cache-to=type=local,dest=/tmp/.buildx-cache \
-#             --push \
-#             -t $IMAGE_NAME_GHCR:$VERSION .
-
-#       - name: Build and Push Docker Image to Docker Hub
-#         run: |
-#           VERSION=${GITHUB_REF_NAME}
-
-#           docker buildx build \
-#             --cache-from=type=local,src=/tmp/.buildx-cache \
-#             --cache-to=type=local,dest=/tmp/.buildx-cache \
-#             --push \
-#             -t $IMAGE_NAME_DOCKER:$VERSION .
