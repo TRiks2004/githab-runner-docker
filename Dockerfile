@@ -16,8 +16,8 @@ RUN apt-get update && \
     bash \
     tar \
     git \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
-
 
 ENV RUNNER_VERSION="2.321.0"
 
@@ -35,6 +35,7 @@ RUN chmod +x /github-runner/entrypoint.sh
 
 # Создаем нового пользователя, чтобы запустить runner без root прав
 RUN adduser --disabled-password --gecos "" github && \
+    usermod -aG docker github && \
     chown -R github:github /github-runner
 
 # Переключаемся на пользователя github
