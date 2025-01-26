@@ -38,11 +38,5 @@ RUN adduser --disabled-password --gecos "" github && \
     usermod -aG docker github && \
     chown -R github:github /github-runner
 
-# Удалим пароль для root
-RUN passwd -d root
-
-# Настроим PAM для разрешения su без пароля
-RUN echo "auth sufficient pam_rootok.so" >> /etc/pam.d/su
-
 # Последний шаг: запуск runner
 ENTRYPOINT ["/github-runner/entrypoint.sh"]
