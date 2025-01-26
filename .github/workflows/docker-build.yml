@@ -70,7 +70,7 @@ jobs:
 
           echo "IMAGE_NAME_GHCR=$IMAGE_NAME_GHCR" >> $GITHUB_ENV
           echo "IMAGE_NAME_DOCKER=$IMAGE_NAME_DOCKER" >> $GITHUB_ENV
-
+      
       # -- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- --
 
       - name: Build and Push Docker Image to GitHub Container Registry
@@ -83,6 +83,9 @@ jobs:
             --push \
             -t $IMAGE_NAME_GHCR:$VERSION .
 
+      - name: Проверка кеша
+        run: ls -lah ~/.buildx-cache
+
       - name: Build and Push Docker Image to Docker Hub
         run: |
           VERSION=${GITHUB_REF_NAME}
@@ -92,6 +95,8 @@ jobs:
             --cache-to=type=local,dest=~/.buildx-cache,mode=max \
             --push \
             -t $IMAGE_NAME_DOCKER:$VERSION .
+
+      # -- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- --
 
       - name: Save Docker cache
         uses: actions/cache@v4
