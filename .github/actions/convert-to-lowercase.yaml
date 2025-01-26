@@ -1,0 +1,27 @@
+name: Преобразование имени репозитория в нижний регистр
+description: Преобразует имена репозитория и владельца в нижний регистр для использования в Docker Hub и GitHub Container Registry.
+
+inputs:
+  repo_owner:
+    description: 'Владелец репозитория'
+    required: true
+  repo_name:
+    description: 'Имя репозитория'
+    required: true
+  docker_user:
+    description: 'Пользователь Docker Hub'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Преобразование имени владельца в нижний регистр
+      run: echo "REPO_OWNER=$(echo "${{ inputs.repo_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    - name: Преобразование имени репозитория в нижний регистр
+      run: echo "REPO_NAME=$(echo "${{ inputs.repo_name }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    - name: Преобразование имени пользователя Docker в нижний регистр
+      run: echo "DOCKER_USER=$(echo "${{ inputs.docker_user }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    - name: Формирование имени образа для GHCR
+      run: echo "IMAGE_NAME_GHCR=ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}" >> $GITHUB_ENV
+    - name: Формирование имени образа для Docker Hub
+      run: echo "IMAGE_NAME_DOCKER=docker.io/${{ env.DOCKER_USER }}/${{ env.REPO_NAME }}" >> $GITHUB_ENV
