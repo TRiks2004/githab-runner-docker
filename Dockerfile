@@ -37,6 +37,7 @@ RUN chmod +x /github-runner/entrypoint.sh
 RUN adduser --disabled-password --gecos "" github && \
     usermod -aG docker github && \
     chown -R github:github /github-runner && \
+    
     chown root:docker /var/run/docker.sock
 
 # Переключаемся на пользователя github
