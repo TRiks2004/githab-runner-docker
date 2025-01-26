@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Структура рабочего каталога
+        run: |
+          ls -lah /
+
       - name: Преобразование имен в нижний регистр
         uses: ./.github/workflows/convert_to_lowercase/action.yml
         with:
