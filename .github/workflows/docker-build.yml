@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Структура рабочего каталога
         run: |
-          ls -lah /home/runner/work/githab-runner-docker
+          ls -lah /home/runner/work/githab-runner-docker//home/runner/work/githab-runner-docker/workflows/convert_to_lowercase
 
       - name: Преобразование имен в нижний регистр
         uses: ./.github/workflows/convert_to_lowercase/action.yml
