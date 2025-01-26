@@ -30,6 +30,9 @@ RUN curl -o actions-runner-linux-x64-$RUNNER_VERSION.tar.gz -L https://github.co
 
 RUN ./bin/installdependencies.sh
 
+COPY entrypoint.sh /github-runner/entrypoint.sh
+RUN chmod +x /github-runner/entrypoint.sh
+
 # Создаем нового пользователя, чтобы запустить runner без root прав
 RUN adduser --disabled-password --gecos "" github && \
     chown -R github:github /github-runner
@@ -38,4 +41,4 @@ RUN adduser --disabled-password --gecos "" github && \
 USER github
 
 # Последний шаг: запуск runner
-CMD ["./config.sh", "--url", "$GITHUB_URL", "--token", "$GITHUB_TOKEN", "--name", "$RUNNER_NAME", "--labels","$RUNNER_LABELS",  "--work", "$WORK_DIR","--runnergroup", "$RUNNER_GROUP", "--unattended", "&&", "./run.sh"]
+ENTRYPOINT ["/github-runner/entrypoint.sh"]
