@@ -60,16 +60,10 @@ jobs:
           IMAGE_NAME_DOCKER: ${{ env.IMAGE_NAME_DOCKER }}
         with:
           context: .
-          push: false
+          push: true
           tags: ${{ env.IMAGE_NAME_GHCR }},${{ env.IMAGE_NAME_DOCKER }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Push to GitHub
-        run: docker push ${{ env.IMAGE_NAME_GHCR }}
-
-      - name: Push to DockerHub
-        run: docker push ${{ env.IMAGE_NAME_DOCKER }}
 
 
 
