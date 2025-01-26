@@ -7,8 +7,6 @@ ENV RUNNER_LABELS="ubuntu,build"
 ENV WORK_DIR="/github-runner/_work"
 ENV RUNNER_GROUP="default"
 
-WORKDIR /github-runner
-
 # Обновляем пакеты и устанавливаем необходимые зависимости
 RUN apt-get update && \
     apt-get install -y \
@@ -18,8 +16,10 @@ RUN apt-get update && \
     git \
     docker.io \
     && rm -rf /var/lib/apt/lists/*
-
+    
 ENV RUNNER_VERSION="2.321.0"
+
+WORKDIR /github-runner
 
 # Скачиваем последнюю версию пакета runner
 RUN curl -o actions-runner-linux-x64-$RUNNER_VERSION.tar.gz -L https://github.com/actions/runner/releases/download/v$RUNNER_VERSION/actions-runner-linux-x64-$RUNNER_VERSION.tar.gz && \
@@ -38,8 +38,14 @@ RUN adduser --disabled-password --gecos "" github && \
     usermod -aG docker github && \
     chown -R github:github /github-runner
 
+# Удалим пароль для root
+RUN passwd -d root
+
+# Настроим PAM для разрешения su без пароля
+RUN echo "auth sufficient pam_rootok.so" >> /etc/pam.d/su
+
 # Переключаемся на пользователя github
-USER github
+# USER github
 
 # Последний шаг: запуск runner
 ENTRYPOINT ["/github-runner/entrypoint.sh"]
