@@ -18,7 +18,7 @@ jobs:
     
     steps:
       - name: Преобразование имен в нижний регистр
-        uses: ./.github/workflows/convert-to-lowercase.yml
+        uses: ./convert-to-lowercase/action.yml
         with:
           repo_owner: ${{ github.repository_owner }}
           repo_name: ${{ github.event.repository.name }}
