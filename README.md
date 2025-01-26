@@ -19,9 +19,12 @@ docker run -d \
 
 ```yaml
 
+volumes:
+  github-runner-data:
+
 services:
-  githab-runner-docker:
-    image: ghcr.io/triks2004/githab-runner-docker:<version>
+  github-runner-docker:
+    image: ghcr.io/triks2004/github-runner-docker:<version>
     container_name: github-runner
     restart: unless-stopped
     environment:
@@ -34,5 +37,6 @@ services:
     network_mode: "host"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - github-runner-data:/github-runner  # Для сохранения данных конфигурации
 
 ```
