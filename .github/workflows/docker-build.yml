@@ -17,21 +17,56 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Структура рабочего каталога
-        run: |
-          ls -lah /home/runner/work/githab-runner-docker/githab-runner-docker/workflows/convert_to_lowercase
 
-      - name: Преобразование имен в нижний регистр
-        uses: /home/runner/work/githab-runner-docker/githab-runner-docker/workflows/convert_to_lowercase/actions.yaml
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          repo_owner: ${{ github.repository_owner }}
-          repo_name: ${{ github.event.repository.name }}
-          docker_user: triksdev
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker Image to GitHub Container Registry
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Создание Имен Образов для Docker Hub And GitHub Container Registry
         run: |
-          echo ${env.IMAGE_NAME_GHCR}
-          echo ${env.IMAGE_NAME_DOCKER}
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
 
-      
+          DOCKER_USER=$(echo "triksdev" | tr '[:upper:]' '[:lower:]')
+
+          IMAGE_NAME_GHCR="ghcr.io/$REPO_OWNER/$REPO_NAME"
+          IMAGE_NAME_DOCKER="docker.io/$DOCKER_USER/$REPO_NAME"
+
+          echo "IMAGE_NAME_GHCR=$IMAGE_NAME_GHCR" >> $GITHUB_ENV
+          echo "IMAGE_NAME_DOCKER=$IMAGE_NAME_DOCKER" >> $GITHUB_ENV
+
+          echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ${{ env.IMAGE_NAME_GHCR }}:${{ env.VERSION }}, ${{ env.IMAGE_NAME_DOCKER }}:${{ env.VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Push to GitHub
+        run: docker push ${{ env.IMAGE_NAME_GHCR }}:${{ env.VERSION }}
+
+      - name: Push to DockerHub
+        run: docker push ${{ env.IMAGE_NAME_DOCKER }}:${{ env.VERSION }}
+
+
 
