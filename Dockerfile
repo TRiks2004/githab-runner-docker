@@ -44,8 +44,5 @@ RUN passwd -d root
 # Настроим PAM для разрешения su без пароля
 RUN echo "auth sufficient pam_rootok.so" >> /etc/pam.d/su
 
-# Переключаемся на пользователя github
-# USER github
-
 # Последний шаг: запуск runner
 ENTRYPOINT ["/github-runner/entrypoint.sh"]
