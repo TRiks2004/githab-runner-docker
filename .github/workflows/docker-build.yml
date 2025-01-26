@@ -90,9 +90,6 @@ jobs:
             --push \
             -t $IMAGE_NAME_DOCKER:$VERSION .
 
-
-deploy:
-
 # name: Build and Push to GitHub Container Registry and Docker Hub
 
 # on:
