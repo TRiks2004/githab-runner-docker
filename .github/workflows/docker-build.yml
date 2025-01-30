@@ -1,3 +1,10 @@
+name: Build and Push to GitHub Container Registry
+
+on:
+  push:
+    tags:
+      - 'v*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,3 +51,4 @@ jobs:
             --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
             --push \
             -t $IMAGE_NAME:$VERSION .
+
